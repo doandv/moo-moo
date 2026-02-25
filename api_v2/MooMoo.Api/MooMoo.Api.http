@@ -1,0 +1,90 @@
+@MooMoo.Api_HostAddress = http://localhost:5000
+
+### US01: Register with Email
+POST {{MooMoo.Api_HostAddress}}/api/auth/register-with-email
+Content-Type: application/json
+
+{
+  "email": "parent@example.com",
+  "password": "password123",
+  "name": "John Doe"
+}
+
+### Test: Duplicate Email (should return 409)
+POST {{MooMoo.Api_HostAddress}}/api/auth/register-with-email
+Content-Type: application/json
+
+{
+  "email": "parent@example.com",
+  "password": "password456",
+  "name": "Jane Doe"
+}
+
+### Test: Invalid Email (should return 400)
+POST {{MooMoo.Api_HostAddress}}/api/auth/register-with-email
+Content-Type: application/json
+
+{
+  "email": "invalid-email",
+  "password": "password123",
+  "name": "Invalid User"
+}
+
+### Test: Short Password (should return 400)
+POST {{MooMoo.Api_HostAddress}}/api/auth/register-with-email
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "123",
+  "name": "Test User"
+}
+
+###
+
+### US04: Login with Email - Successful
+POST {{MooMoo.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "parent@example.com",
+  "password": "password123"
+}
+
+### US04: Login - Wrong Password (should return 401)
+POST {{MooMoo.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "parent@example.com",
+  "password": "wrongpassword"
+}
+
+### US04: Login - Email Not Found (should return 401)
+POST {{MooMoo.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "notfound@example.com",
+  "password": "password123"
+}
+
+### US04: Login - Invalid Email Format (should return 400)
+POST {{MooMoo.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "invalid-email",
+  "password": "password123"
+}
+
+### US04: Login - Empty Password (should return 400)
+POST {{MooMoo.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "parent@example.com",
+  "password": ""
+}
+
+

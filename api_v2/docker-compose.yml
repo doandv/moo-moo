@@ -1,0 +1,42 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: moomoo-postgres-dotnet
+    restart: always
+    environment:
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_DB: moomoo
+    ports:
+      - '5433:5432'  # Port 5433 để không conflict với NestJS (5432)
+    volumes:
+      - postgres_data_dotnet:/var/lib/postgresql/data
+    networks:
+      - moomoo-network
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: moomoo-api-dotnet
+    restart: always
+    ports:
+      - '5000:5000'  # HTTP
+      - '5001:5001'  # HTTPS (nếu cần)
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:5000
+      - ConnectionStrings__DefaultConnection=Host=db;Port=5432;Database=moomoo;Username=myuser;Password=mypassword
+    depends_on:
+      - db
+    networks:
+      - moomoo-network
+
+volumes:
+  postgres_data_dotnet:
+
+networks:
+  moomoo-network:
+    driver: bridge
